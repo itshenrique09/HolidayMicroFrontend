@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ColabsMoreThanXDaysComponent } from './colabs-more-than-xdays.component';
+import { HttpClientModule } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 describe('ColabsMoreThanXDaysComponent', () => {
   let component: ColabsMoreThanXDaysComponent;
@@ -8,7 +10,13 @@ describe('ColabsMoreThanXDaysComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ColabsMoreThanXDaysComponent]
+      imports: [ColabsMoreThanXDaysComponent, HttpClientModule],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { paramMap: {get:(id:number)=>{id:1}}}}
+        }
+      ]
     })
     .compileComponents();
     

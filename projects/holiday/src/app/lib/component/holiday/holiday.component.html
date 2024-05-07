@@ -1,18 +1,18 @@
 <div>
-<div>
-    <button class="action" (click)="showAddHolidayForm = true">Add Holiday</button>
-</div>
-
-<!-- Formulário de adicionar férias -->
-<div *ngIf="showAddHolidayForm" class="add-holiday-form">
-    <div class="form-overlay"></div> <!-- Fundo escuro para destacar o formulário -->
-    <div class="form-container">
-        <span class="close" (click)="showAddHolidayForm = false">&times;</span>
-        <app-holiday-add (holidayAdded)="onHolidayAdded()" ></app-holiday-add>
+    <div>
+        <button class="action" (click)="showAddHolidayForm = true">Add Holiday</button>
     </div>
-</div>
 
-<!-- Resto do seu conteúdo -->
+    <!-- Formulário de adicionar férias -->
+    <div *ngIf="showAddHolidayForm" class="add-holiday-form">
+        <div class="form-overlay"></div> <!-- Fundo escuro para destacar o formulário -->
+        <div class="form-container">
+            <span class="close" (click)="showAddHolidayForm = false">&times;</span>
+            <app-holiday-add (holidayAdded)="onHolidayAdded()"></app-holiday-add>
+        </div>
+    </div>
+
+    <!-- Resto do seu conteúdo -->
 
 
     <div>
