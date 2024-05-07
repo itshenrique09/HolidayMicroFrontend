@@ -85,6 +85,7 @@ export class HolidayComponent {
     this.hideAddHolidayPopup(); 
     this.pollingInterval = setInterval(() => {
       if (this.pollingCount >= this.maxPollingCount) {
+        this.pollingCount = 0;
         clearInterval(this.pollingInterval);
         return;
       }
