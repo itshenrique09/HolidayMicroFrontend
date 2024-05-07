@@ -1,1 +1,33 @@
-<p>holiday works!</p>
+<div>
+    <button [routerLink]="['/Holiday/add-holiday']">Novas Férias</button>
+
+    <div>
+        <input type="number" placeholder="nº dias de férias" #nDays>
+        <button class="action" (click)="getRouterLink(nDays.value)">Procurar Colaboradores</button>
+    </div>
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Colaborador</th>
+            <th>Data de Início</th>
+            <th>Data de Fim</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (holi of holidays; track $index) {
+        <tr>
+            <td>{{ holi.id }}</td>
+            <td>{{ holi._colabName }}</td>
+            <td>{{ holi._holidayPeriod.startDate }}</td>
+            <td>{{ holi._holidayPeriod.endDate }}</td>
+            <td>
+                <button class="action" [routerLink]="['/Holiday/holidays-in-period', holi._colabId]">Férias em
+                    Período</button>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

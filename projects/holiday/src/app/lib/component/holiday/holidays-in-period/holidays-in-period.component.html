@@ -1,0 +1,38 @@
+<h2>{{colabName}}</h2>
+
+<div class="form">
+    <div>
+        <label for="new-holiStart">Data de Início:</label>
+        <input type="date" id="new-holiStart" #holiStart required>
+    </div>
+
+    <div>
+        <label for="new-holiEnd">Data de Fim:</label>
+        <input type="date" id="new-holiEnd" #holiEnd required>
+    </div>
+
+    <div>
+        <button (click)="getHolidaysInPeriod(holiStart.value, holiEnd.value)">Procurar</button>
+        <button type="button" [routerLink]="['/Holiday']">Cancelar</button>
+    </div>
+</div>
+
+
+@if(periods.length > 0){
+<table>
+    <thead>
+        <tr>
+            <th>Data de Início</th>
+            <th>Data de Fim</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (p of periods; track $index) {
+        <tr>
+            <td>{{ p.startDate }}</td>
+            <td>{{ p.endDate }}</td>
+        </tr>
+        }
+    </tbody>
+</table>
+}

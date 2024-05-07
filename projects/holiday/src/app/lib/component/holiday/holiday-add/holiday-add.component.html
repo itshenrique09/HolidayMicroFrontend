@@ -1,1 +1,28 @@
-<p>holiday-add works!</p>
+<div class="form">
+    <div>
+        <label for="new-holiColab">Colaborador:</label>
+        <select id="new-holiColab" #holiColab required>
+            @for(colab of colaborators; track $index) {
+            <option [value]="colab.id">{{ colab.name }}</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label for="new-holiStart">Data de Início:</label>
+        <input type="date" id="new-holiStart" #holiStart required>
+    </div>
+
+    <div>
+        <label for="new-holiEnd">Data de Fim:</label>
+        <input type="date" id="new-holiEnd" #holiEnd required>
+    </div>
+
+    <div>
+        <button type="submit"
+            (click)="add(holiColab.value, holiStart.value, holiEnd.value); holiColab.value=''; holiStart.value=''; holiEnd.value=''">
+            Adicionar
+        </button>
+        <button type="button" [routerLink]="['/Holiday']">Cancelar</button>
+    </div>
+</div>
