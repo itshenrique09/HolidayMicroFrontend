@@ -33,17 +33,21 @@ export class HolidayComponent {
   }
 
   getHolidays() {
+    this.holidayService.getHolidays().subscribe(holidays => {
+      this.mapHolidays(holidays);
+    });
+  }
+
+  mapHolidays(holidays: Holiday[]){
     this.colaboratorService.getColaborators().subscribe();
     this.colaboratorsMap = this.colaboratorService.colaboratorsMap;
 
-    this.holidayService.getHolidays().subscribe(holidays => {
-      this.holidays = holidays.map(holiday => ({
-        id: holiday.id,
-        _colabId: holiday._colabId,
-        _colabName: this.colaboratorsMap.get(holiday._colabId),
-        _holidayPeriod: holiday._holidayPeriod
-      }));
-    });
+    this.holidays = holidays.map(holiday => ({
+      id: holiday.id,
+      _colabId: holiday._colabId,
+      _colabName: this.colaboratorsMap.get(holiday._colabId),
+      _holidayPeriod: holiday._holidayPeriod
+    }));
   }
 
   getRouterLink(nDays: string) {
@@ -56,22 +60,24 @@ export class HolidayComponent {
     let previousCount = this.holidays.length; 
     this.holidayService.getHolidays().subscribe(holidays => {
       this.holidays = holidays;
-      this.getHolidays()
+      this.mapHolidays(holidays);
       const currentCount = this.holidays.length; 
       if (currentCount > previousCount) {
         this.toast.success({detail: 'New holiday added!', summary: 'Success', duration: 5000});
         previousCount = currentCount
+        this.pollingCount = this.maxPollingCount;
       }
     });
   }
   
   onHolidayAdded(): void {
     this.pollingInterval = setInterval(() => {
-      this.pollingCount++;
-      this.fetchApprovedHolidays();
       if (this.pollingCount >= this.maxPollingCount) {
         clearInterval(this.pollingInterval);
+        return;
       }
+      this.pollingCount++;
+      this.fetchApprovedHolidays();
     }, 5000); 
   }
 
