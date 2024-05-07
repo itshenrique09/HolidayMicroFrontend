@@ -21,7 +21,7 @@ export class HolidayService {
   getHolidays(): Observable<Holiday[]> {
     return this.http.get<Holiday[]>(this.holidayQUrl)
       .pipe(
-        catchError(this.handleError<Holiday[]>('getHolidays', []))
+        catchError(this.handleError<Holiday[]>())
       );
   }
 
@@ -29,7 +29,7 @@ export class HolidayService {
     const url = `${this.holidayQUrl}/periods/${id}?startDate=${startDate}&endDate=${endDate}`;
     return this.http.get<HolidayPeriod[]>(url)
       .pipe(
-        catchError(this.handleError<HolidayPeriod[]>('getHolidayPeriodsInPeriod', []))
+        catchError(this.handleError<HolidayPeriod[]>())
       );
   }
 
@@ -37,24 +37,20 @@ export class HolidayService {
     const url = `${this.holidayQUrl}/${xDays}/colabsComFeriasSuperioresAXDias`;
     return this.http.get<number[]>(url)
       .pipe(
-        catchError(this.handleError<number[]>('getHolidayPeriodsInPeriod', []))
+        catchError(this.handleError<number[]>())
       );
   }
 
   addHoliday(holi: Holiday): Observable<Holiday> {
     return this.http.post<Holiday>(this.holidayCUrl, holi, this.httpOptions).pipe(
-      catchError(this.handleError<Holiday>('addHoliday'))
+      catchError(this.handleError<Holiday>())
     );
   }
 
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>() {
     return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
+      console.error(error); 
+      throw error;
     };
   }
 }

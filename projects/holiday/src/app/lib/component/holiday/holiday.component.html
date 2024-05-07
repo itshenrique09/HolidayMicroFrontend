@@ -1,5 +1,7 @@
 <div>
-    <button [routerLink]="['/Holiday/add-holiday']">Novas Férias</button>
+    <app-holiday-add
+    (holidayAdded)="onHolidayAdded()"
+  ></app-holiday-add>
 
     <div>
         <input type="number" placeholder="nº dias de férias" #nDays>

@@ -5,6 +5,8 @@ import { HolidayPeriod } from '../../../model/holidayPeriod';
 import { Router, RouterLink } from '@angular/router';
 import { ColaboratorService } from '../../../service/colaborator.service';
 import { Colaborator } from '../../../model/colaborator';
+import { HttpErrorResponse } from '@angular/common/http';
+import { NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-holiday-add',
@@ -18,25 +20,41 @@ export class HolidayAddComponent {
 
   colaborators: Colaborator[] = []
 
-  constructor(private holidayService: HolidayService, private colaboratorService: ColaboratorService , private router: Router ) { }
+  constructor(
+    private holidayService: HolidayService,
+    private colaboratorService: ColaboratorService,
+    private router: Router,
+    private toast: NgToastService
+  ) { }
 
-  ngOnInit(){
+  ngOnInit() {
     this.getColaborators();
   }
 
-  getColaborators(){
+  getColaborators() {
     this.colaboratorService.getColaborators()
       .subscribe(colabs => this.colaborators = colabs);
   }
-  
-  add(colab:string, startDate: string, endDate: string) {
+
+  add(colab: string, startDate: string, endDate: string) {
     let _colabId = parseInt(colab);
-    let _holidayPeriod = {startDate, endDate} as HolidayPeriod;
+    let _holidayPeriod = { startDate, endDate } as HolidayPeriod;
 
     this.holidayService.addHoliday({ _colabId, _holidayPeriod } as Holiday)
-      .subscribe(holi => {
-        //this.holidayAdded.emit(holi);
-        this.router.navigate(['/Holiday'], { state: { holiday: holi } });
+      .subscribe({
+        next: hol => {
+          // Emitir evento de férias adicionadas
+          this.holidayAdded.emit(hol);
+          this.toast.info({ detail: "Holiday pendent", summary: 'Info', duration: 4000 });
+          this.router.navigate(['/Holiday'], { state: { holiday: hol } });
+        },
+        error: err => {
+          if (err instanceof HttpErrorResponse) {
+            this.toast.error({ detail: err.error[0], summary: 'Error', duration: 5000 });
+          } else {
+            this.toast.error({ detail: 'An unexpected error occurred.', summary: 'Error', duration: 5000 });
+          }
+        }
       });
   }
 }
