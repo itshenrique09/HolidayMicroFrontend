@@ -46,7 +46,6 @@ export class HolidayAddComponent {
           // Emitir evento de férias adicionadas
           this.holidayAdded.emit(hol);
           this.toast.info({ detail: "Holiday pendent", summary: 'Info', duration: 4000 });
-          this.router.navigate(['/Holiday'], { state: { holiday: hol } });
         },
         error: err => {
           if (err instanceof HttpErrorResponse) {

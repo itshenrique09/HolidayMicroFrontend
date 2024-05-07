@@ -1,5 +1,8 @@
 <div class="form">
     <div>
+        <h1>Adicionar Holiday</h1>
+    </div>
+    <div>
         <label for="new-holiColab">Colaborador:</label>
         <select id="new-holiColab" #holiColab required>
             @for(colab of colaborators; track $index) {
@@ -23,6 +26,5 @@
             (click)="add(holiColab.value, holiStart.value, holiEnd.value); holiColab.value=''; holiStart.value=''; holiEnd.value=''">
             Adicionar
         </button>
-        <button type="button" [routerLink]="['/Holiday']">Cancelar</button>
     </div>
 </div>
