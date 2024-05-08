@@ -28,4 +28,26 @@ describe('ColabsMoreThanXDaysComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should display message when there are no colaborators', () => {
+    const message = fixture.nativeElement.querySelector('h3');
+
+    expect(message.textContent).toContain('Não há colaboradores.')
+  });
+
+  it('should display table when there are colaborators', () => {
+    component.colaboratorsXDays = [
+      {id: 1, name: 'John Doe'}
+    ];
+
+    fixture.detectChanges();
+
+    const tableElement = fixture.nativeElement.querySelector('table');
+    const tableRowElements = fixture.nativeElement.querySelectorAll('tbody td');
+
+    expect(tableElement).toBeTruthy();
+    expect(tableRowElements.length).toBe(2);
+    expect(tableRowElements[0].textContent).toContain('1');
+    expect(tableRowElements[1].textContent).toContain('John Doe');
+  });
 });

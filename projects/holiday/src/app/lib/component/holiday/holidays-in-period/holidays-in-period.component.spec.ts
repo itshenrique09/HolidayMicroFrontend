@@ -27,4 +27,38 @@ describe('HolidaysInPeriodComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should display colabName', () => {
+    component.colabName = 'John Doe';
+    fixture.detectChanges();
+
+    const colabName = fixture.nativeElement.querySelector('h2').textContent;
+    expect(colabName).toBe('John Doe');
+  });
+
+  it('should call getHolidaysInPeriod with input values when "Procurar" button is clicked', () => {
+    spyOn(component, 'getHolidaysInPeriod');
+    const holiStartInput = fixture.nativeElement.querySelector('#new-holiStart');
+    const holiEndInput = fixture.nativeElement.querySelector('#new-holiEnd');
+    const searchButton = fixture.nativeElement.querySelector('button');
+
+    holiStartInput.value = '2024-05-01';
+    holiEndInput.value = '2024-05-05';
+    searchButton.click();
+
+    expect(component.getHolidaysInPeriod).toHaveBeenCalledWith('2024-05-01', '2024-05-05');
+  });
+
+  it('should render periods table when periods array is not empty', () => {
+    component.periods = [{ startDate: '2024-05-01', endDate: '2024-05-05' }];
+    fixture.detectChanges();
+
+    const tableElement = fixture.nativeElement.querySelector('table');
+    const tableRowElements = fixture.nativeElement.querySelectorAll('tbody td');
+
+    expect(tableElement).toBeTruthy();
+    expect(tableRowElements.length).toBe(2);
+    expect(tableRowElements[0].textContent).toContain('2024-05-01');
+    expect(tableRowElements[1].textContent).toContain('2024-05-05');
+  });
 });
