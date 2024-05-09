@@ -1,7 +1,4 @@
 <div>
-    <div>
-        <button class="action" (click)="showAddHolidayForm = true">Add Holiday</button>
-    </div>
 
     <!-- Formulário de adicionar férias -->
     <div *ngIf="showAddHolidayForm" class="add-holiday-form">
@@ -15,10 +12,14 @@
     <!-- Resto do seu conteúdo -->
 
 
-    <div>
-        <input type="number" placeholder="nº dias de férias" #nDays>
-        <button class="action" (click)="getRouterLink(nDays.value)">Procurar Colaboradores</button>
+    <div class="container">
+        <button class="add-holiday-btn" (click)="showAddHolidayForm = true">Add Holiday</button>
+        <div class="container2">
+            <input type="number" placeholder="nº dias de férias" #nDays>
+            <button class="action2" (click)="getRouterLink(nDays.value)">Procurar Colaboradores</button>
+        </div>
     </div>
+
 </div>
 <table>
     <thead>
