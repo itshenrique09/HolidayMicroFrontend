@@ -1,122 +1,161 @@
 {
-	"$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-	"version": 1,
-	"newProjectRoot": "projects",
-	"projects": {
-		"Holiday": {
-			"projectType": "application",
-			"schematics": {},
-			"root": "projects/holiday",
-			"sourceRoot": "projects/holiday/src",
-			"prefix": "app",
-			"architect": {
-				"build": {
-					"builder": "@angular-architects/native-federation:build",
-					"options": {},
-					"configurations": {
-						"production": {
-							"target": "Holiday:esbuild:production"
-						},
-						"development": {
-							"target": "Holiday:esbuild:development",
-							"dev": true
-						}
-					},
-					"defaultConfiguration": "production"
-				},
-				"serve": {
-					"builder": "@angular-architects/native-federation:build",
-					"options": {
-						"target": "Holiday:serve-original:development",
-						"rebuildDelay": 0,
-						"dev": true,
-						"port": 0
-					}
-				},
-				"extract-i18n": {
-					"builder": "@angular-devkit/build-angular:extract-i18n",
-					"options": {
-						"buildTarget": "Holiday:build"
-					}
-				},
-				"test": {
-					"builder": "@angular-devkit/build-angular:karma",
-					"options": {
-						"polyfills": [
-							"zone.js",
-							"zone.js/testing"
-						],
-						"tsConfig": "projects/holiday/tsconfig.spec.json",
-						"assets": [
-							"projects/holiday/src/favicon.ico",
-							"projects/holiday/src/assets"
-						],
-						"styles": [
-							"projects/holiday/src/styles.css"
-						],
-						"scripts": []
-					}
-				},
-				"esbuild": {
-					"builder": "@angular-devkit/build-angular:application",
-					"options": {
-						"outputPath": "dist/holiday",
-						"index": "projects/holiday/src/index.html",
-						"browser": "projects/holiday/src/main.ts",
-						"polyfills": [
-							"zone.js",
-							"es-module-shims"
-						],
-						"tsConfig": "projects/holiday/tsconfig.app.json",
-						"assets": [
-							"projects/holiday/src/favicon.ico",
-							"projects/holiday/src/assets"
-						],
-						"styles": [
-							"projects/holiday/src/styles.css"
-						],
-						"scripts": []
-					},
-					"configurations": {
-						"production": {
-							"budgets": [
-								{
-									"type": "initial",
-									"maximumWarning": "500kb",
-									"maximumError": "1mb"
-								},
-								{
-									"type": "anyComponentStyle",
-									"maximumWarning": "2kb",
-									"maximumError": "4kb"
-								}
-							],
-							"outputHashing": "all"
-						},
-						"development": {
-							"optimization": false,
-							"extractLicenses": false,
-							"sourceMap": true
-						}
-					},
-					"defaultConfiguration": "production"
-				},
-				"serve-original": {
-					"builder": "@angular-devkit/build-angular:dev-server",
-					"configurations": {
-						"production": {
-							"buildTarget": "Holiday:esbuild:production"
-						},
-						"development": {
-							"buildTarget": "Holiday:esbuild:development"
-						}
-					},
-					"defaultConfiguration": "development",
-					"options": {
-						"port": 4201
-					}
-				}
-			}
-		}
-	}
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "Holiday": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/holiday",
+      "sourceRoot": "projects/holiday/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-architects/native-federation:build",
+          "options": {},
+          "configurations": {
+            "production": {
+              "target": "Holiday:esbuild:production"
+            },
+            "development": {
+              "target": "Holiday:esbuild:development",
+              "dev": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-architects/native-federation:build",
+          "options": {
+            "target": "Holiday:serve-original:development",
+            "rebuildDelay": 0,
+            "dev": true,
+            "port": 0
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "buildTarget": "Holiday:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "projects/holiday/tsconfig.spec.json",
+            "assets": [
+              "projects/holiday/src/favicon.ico",
+              "projects/holiday/src/assets"
+            ],
+            "styles": [
+              "projects/holiday/src/styles.css"
+            ],
+            "scripts": []
+          }
+        },
+        "esbuild": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/holiday",
+            "index": "projects/holiday/src/index.html",
+            "browser": "projects/holiday/src/main.ts",
+            "polyfills": [
+              "zone.js",
+              "es-module-shims"
+            ],
+            "tsConfig": "projects/holiday/tsconfig.app.json",
+            "assets": [
+              "projects/holiday/src/favicon.ico",
+              "projects/holiday/src/assets"
+            ],
+            "styles": [
+              "projects/holiday/src/styles.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-original": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "Holiday:esbuild:production"
+            },
+            "development": {
+              "buildTarget": "Holiday:esbuild:development"
+            }
+          },
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 4204
+          }
+        },
+        "cypress-run": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "Holiday:serve",
+            "configFile": "cypress.config.js"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "Holiday:serve:production"
+            }
+          }
+        },
+        "cypress-open": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "watch": true,
+            "headless": false,
+            "configFile": "cypress.config.js"
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "Holiday:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "Holiday:serve:production"
+            }
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "schematicCollections": [
+      "@cypress/schematic",
+      "@schematics/angular"
+    ]
+  }
 }

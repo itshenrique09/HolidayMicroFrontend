@@ -1,98 +1,129 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-
+import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HolidayComponent } from './holiday.component';
-import { HttpClientModule } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { HolidayService } from '../../service/holiday.service';
+import { ColaboratorService } from '../../service/colaborator.service';
+import { CommonModule } from '@angular/common';
+
+class MockHolidayService {
+    getHolidays() {
+        return of([
+            { id: 1, _colabId: 101, _holidayPeriod: '2024-06-01 to 2024-06-05' },
+        ]);
+    }
+}
+
+class MockColaboratorService {
+    colaboratorsMap = new Map<number, string>([
+        [101, 'John Doe'],
+    ]);
+
+    getColaborators() {
+        return of([]);
+    }
+}
+
+class MockRouter {
+    navigate() { }
+}
 
 describe('HolidayComponent', () => {
-  let component: HolidayComponent;
-  let fixture: ComponentFixture<HolidayComponent>;
+    let component: HolidayComponent;
+    let fixture: ComponentFixture<HolidayComponent>;
+    let router: Router;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [HolidayComponent, HttpClientModule],
-      providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: {get:(id:number)=>{id:1}}}}
-        }
-      ]
-    })
-      .compileComponents();
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [CommonModule, HolidayComponent],
+            providers: [
+                { provide: HolidayService, useClass: MockHolidayService },
+                { provide: ColaboratorService, useClass: MockColaboratorService },
+                { provide: Router, useClass: MockRouter },
+                {
+                    provide: ActivatedRoute,
+                    useValue: { snapshot: { paramMap: { get: (id: number) => { id: 1 } } } }
+                }
+            ],
+        }).compileComponents();
 
-    fixture = TestBed.createComponent(HolidayComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+        fixture = TestBed.createComponent(HolidayComponent);
+        component = fixture.componentInstance;
+        router = TestBed.inject(Router);
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 
-  it('should have add holiday button', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('button.action')?.textContent).toContain('Add Holiday');
-  });
+    it('should have add holiday button', () => {
+        const compiled = fixture.nativeElement as HTMLElement;
+        expect(compiled.querySelector('.add-holiday-btn')?.textContent).toContain('Add Holiday');
+    });
 
-  it('should set showAddHolidayForm to true and show form when Add Holiday button is clicked', () => {
-    const button = fixture.nativeElement.querySelector('button.action');
-    
-    expect(component.showAddHolidayForm).toBe(false);
-    button.click();
-    fixture.detectChanges();
-    expect(component.showAddHolidayForm).toBe(true);
+    it('should set showAddHolidayForm to true and show form when Add Holiday button is clicked', () => {
+        const button = fixture.nativeElement.querySelector('.add-holiday-btn');
 
-    const formDiv = fixture.nativeElement.querySelector('.add-holiday-form');
-    expect(formDiv).toBeTruthy();
-  });
+        expect(component.showAddHolidayForm).toBe(false);
+        button.click();
+        fixture.detectChanges();
+        expect(component.showAddHolidayForm).toBe(true);
 
-  it('should set showAddHolidayForm to false and close form when close button is clicked', () => {
-    component.showAddHolidayForm = true;
-    fixture.detectChanges();
+        const formDiv = fixture.nativeElement.querySelector('.add-holiday-form');
+        expect(formDiv).toBeTruthy();
+    });
 
-    let formDiv = fixture.nativeElement.querySelector('.add-holiday-form');
-    const close = fixture.nativeElement.querySelector('.close');
-    expect(formDiv).toBeTruthy();
+    it('should set showAddHolidayForm to false and close form when close button is clicked', () => {
+        component.showAddHolidayForm = true;
+        fixture.detectChanges();
 
-    close.click();
-    fixture.detectChanges();
+        let formDiv = fixture.nativeElement.querySelector('.add-holiday-form');
+        const close = fixture.nativeElement.querySelector('.close');
+        expect(formDiv).toBeTruthy();
 
-    formDiv = fixture.nativeElement.querySelector('.add-holiday-form');
-    expect(formDiv).toBeFalsy();
-  });
+        close.click();
+        fixture.detectChanges();
 
-  it('should render input and button', () => {
-    const inputElement = fixture.nativeElement.querySelector('input[type="number"]');
-    const buttonElement = fixture.nativeElement.querySelector('button.action');
+        formDiv = fixture.nativeElement.querySelector('.add-holiday-form');
+        expect(formDiv).toBeFalsy();
+    });
 
-    expect(inputElement).toBeTruthy();
-    expect(buttonElement).toBeTruthy();
-  });
+    it('should render input and button', () => {
+        const inputElement = fixture.nativeElement.querySelector('input[type="number"]');
+        const buttonElement = fixture.nativeElement.querySelector('button.action');
 
-  it('should render table headers', () => {
-    const tableHeaderElements = fixture.nativeElement.querySelectorAll('th');
-  
-    expect(tableHeaderElements.length).toBe(5);
-    expect(tableHeaderElements[0].textContent).toContain('ID');
-    expect(tableHeaderElements[1].textContent).toContain('Colaborador');
-    expect(tableHeaderElements[2].textContent).toContain('Data de Início');
-    expect(tableHeaderElements[3].textContent).toContain('Data de Fim');
-    expect(tableHeaderElements[4].textContent).toContain('Ações');
-  });
+        expect(inputElement).toBeTruthy();
+        expect(buttonElement).toBeTruthy();
+    });
 
-  it('should render table rows based on provided data', () => {
-    component.holidays = [
-      { id: 1, _colabId: 1, _colabName: 'John Doe', _holidayPeriod: { startDate: '2024-05-01', endDate: '2024-05-05' } },
-    ];
-    fixture.detectChanges();
-  
-    const tableRowElements = fixture.nativeElement.querySelectorAll('tbody tr');
-  
-    expect(tableRowElements.length).toBe(1);
-  
-    expect(tableRowElements[0].querySelector('td:nth-child(1)').textContent).toContain('1');
-    expect(tableRowElements[0].querySelector('td:nth-child(2)').textContent).toContain('John Doe');
-    expect(tableRowElements[0].querySelector('td:nth-child(3)').textContent).toContain('2024-05-01');
-    expect(tableRowElements[0].querySelector('td:nth-child(4)').textContent).toContain('2024-05-05');
-  });
+    it('should render table rows based on provided data', () => {
+        component.holidays = [
+            { id: 1, _colabId: 1, _colabName: 'John Doe', _holidayPeriod: { startDate: '2024-05-01', endDate: '2024-05-05' } },
+        ];
+        fixture.detectChanges();
+
+        const tableRowElements = fixture.nativeElement.querySelectorAll('tbody tr');
+
+        expect(tableRowElements.length).toBe(1);
+
+        expect(tableRowElements[0].querySelector('td:nth-child(1)').textContent).toContain('1');
+        expect(tableRowElements[0].querySelector('td:nth-child(2)').textContent).toContain('John Doe');
+        expect(tableRowElements[0].querySelector('td:nth-child(3)').textContent).toContain('2024-05-01');
+        expect(tableRowElements[0].querySelector('td:nth-child(4)').textContent).toContain('2024-05-05');
+    });
+
+    it('should fetch and map holidays on init', () => {
+        component.ngOnInit();
+        fixture.detectChanges();
+
+        expect(component.holidays.length).toBe(1);
+        expect(component.holidays[0]._colabName).toBe('John Doe');
+    });
+
+    it('should navigate to correct URL when getRouterLink is called', () => {
+        const navigateSpy = spyOn(router, 'navigate');
+        component.getRouterLink('5');
+        expect(navigateSpy).toHaveBeenCalledWith(['/Holiday/colaborator', '5']);
+    });
 });

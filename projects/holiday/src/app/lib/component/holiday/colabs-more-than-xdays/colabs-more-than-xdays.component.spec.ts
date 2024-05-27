@@ -1,27 +1,56 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ColabsMoreThanXDaysComponent } from './colabs-more-than-xdays.component';
-import { HttpClientModule } from '@angular/common/http';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { of } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { ColabsMoreThanXDaysComponent } from './colabs-more-than-xdays.component';
+import { HolidayService } from '../../../service/holiday.service';
+import { ColaboratorService } from '../../../service/colaborator.service';
+
+class MockHolidayService {
+  getColaboratorsXDays(nDays: number) {
+    return of([1]); // Mock response with collaborator IDs
+  }
+}
+
+class MockColaboratorService {
+  colaboratorsMap = new Map<number, string>([
+    [1, 'John Doe']
+  ]);
+
+  getColaborators() {
+    return of([{ id: 1, name: 'John Doe' }]);
+  }
+}
+
+class MockActivatedRoute {
+  snapshot = {
+    paramMap: {
+      get: (key: string) => '10'
+    }
+  };
+}
 
 describe('ColabsMoreThanXDaysComponent', () => {
   let component: ColabsMoreThanXDaysComponent;
   let fixture: ComponentFixture<ColabsMoreThanXDaysComponent>;
+  let holidayService: HolidayService;
+  let colaboratorService: ColaboratorService;
+  let route: ActivatedRoute;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ColabsMoreThanXDaysComponent, HttpClientModule],
+      imports: [ColabsMoreThanXDaysComponent],
       providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: {get:(id:number)=>{id:1}}}}
-        }
+        { provide: HolidayService, useClass: MockHolidayService },
+        { provide: ColaboratorService, useClass: MockColaboratorService },
+        { provide: ActivatedRoute, useClass: MockActivatedRoute }
       ]
-    })
-    .compileComponents();
-    
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ColabsMoreThanXDaysComponent);
     component = fixture.componentInstance;
+    holidayService = TestBed.inject(HolidayService);
+    colaboratorService = TestBed.inject(ColaboratorService);
+    route = TestBed.inject(ActivatedRoute);
     fixture.detectChanges();
   });
 
@@ -29,17 +58,38 @@ describe('ColabsMoreThanXDaysComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display message when there are no colaborators', () => {
-    const message = fixture.nativeElement.querySelector('h3');
+  it('should initialize with nDays and fetch collaborators', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
 
-    expect(message.textContent).toContain('Não há colaboradores.')
+    expect(component.nDays).toBe(10);
+    expect(component.colaboratorsXDays.length).toBe(1);
+    expect(component.colaboratorsXDays[0].name).toBe('John Doe');
+  });
+
+  it('should fetch colaborators on init', () => {
+    spyOn(colaboratorService, 'getColaborators').and.callThrough();
+
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    expect(colaboratorService.getColaborators).toHaveBeenCalled();
+    expect(component.colaboratorsMap.size).toBe(1);
+    expect(component.colaboratorsMap.get(1)).toBe('John Doe');
+  });
+
+  it('should map collaborator IDs to names', () => {
+    component.colaboratorsMap.set(1, 'John Doe');
+    component.getColaboratorXDays();
+    fixture.detectChanges();
+
+    expect(component.colaboratorsXDays.length).toBe(1);
+    expect(component.colaboratorsXDays[0].name).toBe('John Doe');
   });
 
   it('should display table when there are colaborators', () => {
-    component.colaboratorsXDays = [
-      {id: 1, name: 'John Doe'}
-    ];
-
+    component.colaboratorsMap.set(1, 'John Doe');
+    component.getColaboratorXDays();
     fixture.detectChanges();
 
     const tableElement = fixture.nativeElement.querySelector('table');

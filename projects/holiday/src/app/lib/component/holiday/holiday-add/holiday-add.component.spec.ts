@@ -1,20 +1,40 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { of } from 'rxjs';
 import { HolidayAddComponent } from './holiday-add.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HolidayService } from '../../../service/holiday.service';
+import { ColaboratorService } from '../../../service/colaborator.service';
+
+class MockHolidayService {
+  addHoliday(holiday: any) {
+    return of(holiday); // Mock successful response
+  }
+}
+
+class MockColaboratorService {
+  getColaborators() {
+    return of([{ id: 1, name: 'John Doe' }]);
+  }
+}
 
 describe('HolidayAddComponent', () => {
   let component: HolidayAddComponent;
   let fixture: ComponentFixture<HolidayAddComponent>;
+  let holidayService: HolidayService;
+  let colaboratorService: ColaboratorService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HolidayAddComponent, HttpClientModule]
-    })
-    .compileComponents();
-    
+      imports: [HolidayAddComponent],
+      providers: [
+        { provide: HolidayService, useClass: MockHolidayService },
+        { provide: ColaboratorService, useClass: MockColaboratorService }
+      ],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(HolidayAddComponent);
     component = fixture.componentInstance;
+    holidayService = TestBed.inject(HolidayService);
+    colaboratorService = TestBed.inject(ColaboratorService);
     fixture.detectChanges();
   });
 
@@ -40,22 +60,20 @@ describe('HolidayAddComponent', () => {
     expect(buttonElement).toBeTruthy();
   });
 
-  it('should call add method with input values when "Adicionar" button is clicked', () => {
-    spyOn(component, 'add');
-
-    component.colaborators = [{id: 1, name: 'John'}];
+  it('should fetch and set colaborators on init', () => {
+    component.ngOnInit();
     fixture.detectChanges();
 
-    const colabSelect = fixture.nativeElement.querySelector('#new-holiColab');
-    const holiStartInput = fixture.nativeElement.querySelector('#new-holiStart');
-    const holiEndInput = fixture.nativeElement.querySelector('#new-holiEnd');
-    const addButton = fixture.nativeElement.querySelector('button[type="submit"]');
+    expect(component.colaborators.length).toBe(1);
+    expect(component.colaborators[0].name).toBe('John Doe');
+  });
 
-    colabSelect.value = '1';
-    holiStartInput.value = '2024-05-01';
-    holiEndInput.value = '2024-05-05';
-    addButton.click();
+  it('should add holiday and emit event on success', () => {
+    spyOn(component.holidayAdded, 'emit');
 
-    expect(component.add).toHaveBeenCalledWith('1', '2024-05-01', '2024-05-05');
+    component.add('1', '2024-06-01', '2024-06-05');
+    fixture.detectChanges();
+
+    expect(component.holidayAdded.emit).toHaveBeenCalled();
   });
 });

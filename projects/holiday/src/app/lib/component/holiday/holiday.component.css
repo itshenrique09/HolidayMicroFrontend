@@ -36,7 +36,7 @@
     /* Add some space between input and button */
 }
 
-.action2 {
+.action {
     padding: 10px 20px;
     font-size: 14px;
     border: none;
@@ -48,7 +48,7 @@
     transition: background-color 0.3s;
 }
 
-.action2:hover {
+.action:hover {
     background-color: #2980b9;
     /* Darker blue color on hover */
 }
