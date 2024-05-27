@@ -36,7 +36,7 @@ jobs:
         run: npm run build --if-present
 
       - name: Run Unit Tests
-        run: npm test
+        run: ng test --watch=false --browsers=ChromeHeadless
 
       - name: Upload Test Results
         if: success() || failure()
