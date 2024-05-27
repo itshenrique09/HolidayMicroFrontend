@@ -65,7 +65,7 @@ describe('HolidayComponent', () => {
     it('should set showAddHolidayForm to true and show form when Add Holiday button is clicked', () => {
         const button = fixture.nativeElement.querySelector('.add-holiday-btn');
 
-        expect(component.showAddHolidayForm).toBe(true);
+        expect(component.showAddHolidayForm).toBe(false);
         button.click();
         fixture.detectChanges();
         expect(component.showAddHolidayForm).toBe(true);
